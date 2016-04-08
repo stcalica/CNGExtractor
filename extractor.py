@@ -1,6 +1,9 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from bs4 import BeautifulSoup as bs
 import requests 
 import json 
+
+scheduler = BackgroundScheduler() 
 
 def extractor():
 	html = bs(requests.get('http://www.cngnow.com/average-cng-prices/pages/default.aspx').content, 'html.parser')  
@@ -9,13 +12,17 @@ def extractor():
 	results = [{'state': state, 'price': price} for state, price in zip(states, prices)]
 	return json.dumps(results)
 	
-	
-def main(): 
+@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour='17')	
+def update(): 
 	f = open('data', 'w+')
 	results = extractor() 
 	f.write(results)
 	f.close() 
 	return 
-
+	
+def main(): 
+	scheduler.start() 
+	
+	
 if __name__ == "__main__": 
 	main() 
