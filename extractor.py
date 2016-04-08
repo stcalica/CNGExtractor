@@ -1,9 +1,9 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.background import BlockingScheduler
 from bs4 import BeautifulSoup as bs
 import requests 
 import json 
 
-scheduler = BackgroundScheduler() 
+scheduler = BlockingScheduler() 
 
 def extractor():
 	html = bs(requests.get('http://www.cngnow.com/average-cng-prices/pages/default.aspx').content, 'html.parser')  
@@ -21,6 +21,10 @@ def update():
 	return 
 	
 def main(): 
+	f = open('data', 'w+')
+	results = extractor() 
+	f.write(results)
+	f.close() 
 	scheduler.start() 
 	
 	
