@@ -1,0 +1,13 @@
+FROM python-2.7:onbuild
+
+COPY . /src
+
+RUN pip install -r requirements.txt
+
+ADD crontab /etc/cron.d/cng-cron
+
+RUN chmod 0644 /etc/cron.d/cng-cron
+
+VOLUME /data : /src/data
+
+CMD ['cron']
