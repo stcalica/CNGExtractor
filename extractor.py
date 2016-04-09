@@ -12,7 +12,6 @@ def extractor():
 	results = [{'state': state, 'price': price} for state, price in zip(states, prices)]
 	return json.dumps(results)
 	
-@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour='17')	
 def update(): 
 	f = open('data', 'w+')
 	results = extractor() 
@@ -21,10 +20,8 @@ def update():
 	return 
 	
 def main(): 
-	f = open('data', 'w+')
-	results = extractor() 
-	f.write(results)
-	f.close() 
+	update()
+	scheduler.add_job(update, 'cron', hour=17) 
 	scheduler.start() 
 	
 	
